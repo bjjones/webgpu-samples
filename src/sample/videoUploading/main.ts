@@ -62,6 +62,7 @@ const init: SampleInit = async ({ canvasRef }) => {
   });
 
   function frame() {
+    const videoFrame = new VideoFrame(video, { timestamp: 0 });
     // Sample is no longer the active page.
     if (!canvasRef.current) return;
 
@@ -75,7 +76,7 @@ const init: SampleInit = async ({ canvasRef }) => {
         {
           binding: 2,
           resource: device.importExternalTexture({
-            source: video,
+            source: videoFrame,   // Change this line back to use 'video', which will have significantly better CPU performance.
           }),
         },
       ],
@@ -101,7 +102,7 @@ const init: SampleInit = async ({ canvasRef }) => {
     passEncoder.draw(6, 1, 0, 0);
     passEncoder.end();
     device.queue.submit([commandEncoder.finish()]);
-
+    videoFrame.close();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
